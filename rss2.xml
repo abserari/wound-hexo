@@ -8,8 +8,30 @@
     <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>明天，是新的一天</description>
-    <pubDate>Fri, 31 May 2019 07:58:12 GMT</pubDate>
+    <pubDate>Wed, 17 Jul 2019 15:55:05 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>Back-to-Blog</title>
+      <link>https://hexo.abser.top/2019/07/17/back-to-blog/</link>
+      <guid>https://hexo.abser.top/2019/07/17/back-to-blog/</guid>
+      <pubDate>Wed, 17 Jul 2019 15:47:14 GMT</pubDate>
+      <description>
+      
+        
+        
+          
+          
+            &lt;p&gt;我开始重新作为一个博客选手开始写作。&lt;br&gt;当然，这其实是说在这里继续进行网站托管的博客。&lt;/p&gt;
+&lt;p&gt;尽量选择技术类文章进行发布，关于自己的感受和感想，在语雀上进行编写。&lt;br&gt;如果合适再放到这里。&lt;/p&gt;
+&lt;p&gt;由于研究精力有限，想必我写的技术文章会比较少，这会造成虽
+          
+        
+      
+      </description>
+      
+      <comments>https://hexo.abser.top/2019/07/17/back-to-blog/#disqus_thread</comments>
+    </item>
     
     <item>
       <title>Slack-Github</title>
