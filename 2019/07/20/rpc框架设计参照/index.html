@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" href="/lib/fancybox/source/jquery.fancybox.css">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Struct&amp;amp;Design Server rpcx1234567891011121314151617181920212223242526272829303132333435// Server is rpcx server that use TCP or UDP.type Server struct &amp;#123;	ln                 net.Listener	readTim">
+<meta name="keywords" content="框架,rpc,go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rpc框架设计参照">
+<meta property="og:url" content="https://hexo.abser.top/2019/07/20/rpc框架设计参照/index.html">
+<meta property="og:site_name" content="Wound">
+<meta property="og:description" content="Struct&amp;amp;Design Server rpcx1234567891011121314151617181920212223242526272829303132333435// Server is rpcx server that use TCP or UDP.type Server struct &amp;#123;	ln                 net.Listener	readTim">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-07-20T04:00:40.892Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Rpc框架设计参照">
+<meta name="twitter:description" content="Struct&amp;amp;Design Server rpcx1234567891011121314151617181920212223242526272829303132333435// Server is rpcx server that use TCP or UDP.type Server struct &amp;#123;	ln                 net.Listener	readTim">
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Wound" type="application/atom+xml">
+
+
+
+  
+  
+  <link rel="canonical" href="https://hexo.abser.top/2019/07/20/rpc框架设计参照/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Rpc框架设计参照 | Wound</title>
+  
+
+
+
+
+  <script async src="//www.googletagmanager.com/gtag/js?id=UA-132780178-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-132780178-1');
+    }
+  </script>
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Wound</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">Gone With Wind</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-sitemap">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>Sitemap</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://hexo.abser.top/2019/07/20/rpc框架设计参照/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Abser Ari">
+      <meta itemprop="description" content="明天，是新的一天">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wound">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Rpc框架设计参照
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-07-20 11:59:03 / Modified: 12:00:40" itemprop="dateCreated datePublished" datetime="2019-07-20T11:59:03+08:00">2019-07-20</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习笔记/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">Comments: </span>
+                <a href="/2019/07/20/rpc框架设计参照/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/20/rpc框架设计参照/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             Views:  
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Struct-amp-Design"><a href="#Struct-amp-Design" class="headerlink" title="Struct&amp;Design"></a>Struct&amp;Design</h1><p><a name="BRgOt"></a></p>
+<h2 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h2><p><a name="4GRoG"></a></p>
+<h3 id="rpcx"><a href="#rpcx" class="headerlink" title="rpcx"></a>rpcx</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Server is rpcx server that use TCP or UDP.</span></span><br><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">	ln                 net.Listener</span><br><span class="line">	readTimeout        time.Duration</span><br><span class="line">	writeTimeout       time.Duration</span><br><span class="line">	gatewayHTTPServer  *http.Server</span><br><span class="line">	DisableHTTPGateway <span class="keyword">bool</span> <span class="comment">// should disable http invoke or not.</span></span><br><span class="line">	DisableJSONRPC     <span class="keyword">bool</span> <span class="comment">// should disable json rpc or not.</span></span><br><span class="line"></span><br><span class="line">	serviceMapMu sync.RWMutex</span><br><span class="line">	serviceMap   <span class="keyword">map</span>[<span class="keyword">string</span>]*service</span><br><span class="line"></span><br><span class="line">	mu         sync.RWMutex</span><br><span class="line">	activeConn <span class="keyword">map</span>[net.Conn]<span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	doneChan   <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	seq        <span class="keyword">uint64</span></span><br><span class="line"></span><br><span class="line">	inShutdown <span class="keyword">int32</span></span><br><span class="line">	onShutdown []<span class="function"><span class="keyword">func</span><span class="params">(s *Server)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">	// <span class="title">TLSConfig</span> <span class="title">for</span> <span class="title">creating</span> <span class="title">tls</span> <span class="title">tcp</span> <span class="title">connection</span>.</span></span><br><span class="line"><span class="function">	<span class="title">tlsConfig</span> *<span class="title">tls</span>.<span class="title">Config</span></span></span><br><span class="line"><span class="function">	// <span class="title">BlockCrypt</span> <span class="title">for</span> <span class="title">kcp</span>.<span class="title">BlockCrypt</span></span></span><br><span class="line"><span class="function">	<span class="title">options</span> <span class="title">map</span>[<span class="title">string</span>]<span class="title">interface</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// CORS options</span></span><br><span class="line">	corsOptions *CORSOptions</span><br><span class="line"></span><br><span class="line">	Plugins PluginContainer</span><br><span class="line"></span><br><span class="line">	<span class="comment">// AuthFunc can be used to auth.</span></span><br><span class="line">	AuthFunc <span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context, req *protocol.Message, token <span class="keyword">string</span>)</span> <span class="title">error</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">	<span class="title">handlerMsgNum</span> <span class="title">int32</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p><a name="8yVvp"></a></p>
+<h3 id="gorilla-rpc"><a href="#gorilla-rpc" class="headerlink" title="gorilla/rpc"></a>gorilla/rpc</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Server serves registered RPC services using registered codecs.</span></span><br><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">	codecs        <span class="keyword">map</span>[<span class="keyword">string</span>]Codec</span><br><span class="line">	services      *serviceMap</span><br><span class="line">	interceptFunc <span class="function"><span class="keyword">func</span><span class="params">(i *RequestInfo)</span> *<span class="title">http</span>.<span class="title">Request</span></span></span><br><span class="line"><span class="function">	<span class="title">beforeFunc</span>    <span class="title">func</span><span class="params">(i *RequestInfo)</span></span></span><br><span class="line"><span class="function">	<span class="title">afterFunc</span>     <span class="title">func</span><span class="params">(i *RequestInfo)</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p><a name="45Iyi"></a></p>
+<h3 id="grpc-go"><a href="#grpc-go" class="headerlink" title="grpc-go"></a>grpc-go</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Server is a gRPC server to serve RPC requests.</span></span><br><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">	opts serverOptions</span><br><span class="line"></span><br><span class="line">	mu     sync.Mutex <span class="comment">// guards following</span></span><br><span class="line">	lis    <span class="keyword">map</span>[net.Listener]<span class="keyword">bool</span></span><br><span class="line">	conns  <span class="keyword">map</span>[transport.ServerTransport]<span class="keyword">bool</span></span><br><span class="line">	serve  <span class="keyword">bool</span></span><br><span class="line">	drain  <span class="keyword">bool</span></span><br><span class="line">	cv     *sync.Cond          <span class="comment">// signaled when connections close for GracefulStop</span></span><br><span class="line">	m      <span class="keyword">map</span>[<span class="keyword">string</span>]*service <span class="comment">// service name -&gt; service info</span></span><br><span class="line">	events trace.EventLog</span><br><span class="line"></span><br><span class="line">	quit               *grpcsync.Event</span><br><span class="line">	done               *grpcsync.Event</span><br><span class="line">	channelzRemoveOnce sync.Once</span><br><span class="line">	serveWG            sync.WaitGroup <span class="comment">// counts active Serve goroutines for GracefulStop</span></span><br><span class="line"></span><br><span class="line">	channelzID <span class="keyword">int64</span> <span class="comment">// channelz unique identification number</span></span><br><span class="line">	czData     *channelzData</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="Ifj02"></a></p>
+<h2 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h2><p><a name="VlMRV"></a></p>
+<h3 id="rpcx-1"><a href="#rpcx-1" class="headerlink" title="rpcx"></a>rpcx</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RPCClient is interface that defines one client to call one server.</span></span><br><span class="line"><span class="keyword">type</span> RPCClient <span class="keyword">interface</span> &#123;</span><br><span class="line">	Connect(network, address <span class="keyword">string</span>) error</span><br><span class="line">	Go(ctx context.Context, servicePath, serviceMethod <span class="keyword">string</span>, args <span class="keyword">interface</span>&#123;&#125;, reply <span class="keyword">interface</span>&#123;&#125;, done <span class="keyword">chan</span> *Call) *Call</span><br><span class="line">	Call(ctx context.Context, servicePath, serviceMethod <span class="keyword">string</span>, args <span class="keyword">interface</span>&#123;&#125;, reply <span class="keyword">interface</span>&#123;&#125;) error</span><br><span class="line">	SendRaw(ctx context.Context, r *protocol.Message) (<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>, []<span class="keyword">byte</span>, error)</span><br><span class="line">	Close() error</span><br><span class="line"></span><br><span class="line">	RegisterServerMessageChan(ch <span class="keyword">chan</span>&lt;- *protocol.Message)</span><br><span class="line">	UnregisterServerMessageChan()</span><br><span class="line"></span><br><span class="line">	IsClosing() <span class="keyword">bool</span></span><br><span class="line">	IsShutdown() <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Client represents a RPC client.</span></span><br><span class="line"><span class="keyword">type</span> Client <span class="keyword">struct</span> &#123;</span><br><span class="line">	option Option</span><br><span class="line"></span><br><span class="line">	Conn net.Conn</span><br><span class="line">	r    *bufio.Reader</span><br><span class="line">	<span class="comment">//w    *bufio.Writer</span></span><br><span class="line"></span><br><span class="line">	mutex        sync.Mutex <span class="comment">// protects following</span></span><br><span class="line">	seq          <span class="keyword">uint64</span></span><br><span class="line">	pending      <span class="keyword">map</span>[<span class="keyword">uint64</span>]*Call</span><br><span class="line">	closing      <span class="keyword">bool</span> <span class="comment">// user has called Close</span></span><br><span class="line">	shutdown     <span class="keyword">bool</span> <span class="comment">// server has told us to stop</span></span><br><span class="line">	pluginClosed <span class="keyword">bool</span> <span class="comment">// the plugin has been called</span></span><br><span class="line"></span><br><span class="line">	Plugins PluginContainer</span><br><span class="line"></span><br><span class="line">	ServerMessageChan <span class="keyword">chan</span>&lt;- *protocol.Message</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="4sdXq"></a></p>
+<h3 id="grpc-go-1"><a href="#grpc-go-1" class="headerlink" title="grpc-go"></a>grpc-go</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ClientConn represents a client connection to an RPC server.</span></span><br><span class="line"><span class="keyword">type</span> ClientConn <span class="keyword">struct</span> &#123;</span><br><span class="line">	ctx    context.Context</span><br><span class="line">	cancel context.CancelFunc</span><br><span class="line"></span><br><span class="line">	target       <span class="keyword">string</span></span><br><span class="line">	parsedTarget resolver.Target</span><br><span class="line">	authority    <span class="keyword">string</span></span><br><span class="line">	dopts        dialOptions</span><br><span class="line">	csMgr        *connectivityStateManager</span><br><span class="line"></span><br><span class="line">	balancerBuildOpts balancer.BuildOptions</span><br><span class="line">	blockingpicker    *pickerWrapper</span><br><span class="line"></span><br><span class="line">	mu              sync.RWMutex</span><br><span class="line">	resolverWrapper *ccResolverWrapper</span><br><span class="line">	sc              *ServiceConfig</span><br><span class="line">	conns           <span class="keyword">map</span>[*addrConn]<span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	<span class="comment">// Keepalive parameter can be updated if a GoAway is received.</span></span><br><span class="line">	mkp             keepalive.ClientParameters</span><br><span class="line">	curBalancerName <span class="keyword">string</span></span><br><span class="line">	balancerWrapper *ccBalancerWrapper</span><br><span class="line">	retryThrottler  atomic.Value</span><br><span class="line"></span><br><span class="line">	firstResolveEvent *grpcsync.Event</span><br><span class="line"></span><br><span class="line">	channelzID <span class="keyword">int64</span> <span class="comment">// channelz unique identification number</span></span><br><span class="line">	czData     *channelzData</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="bGOQ3"></a></p>
+<h2 id="Codec"><a href="#Codec" class="headerlink" title="Codec"></a>Codec</h2><p><a name="96IIH"></a></p>
+<h3 id="rpcx-2"><a href="#rpcx-2" class="headerlink" title="rpcx"></a>rpcx</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Codec defines the interface that decode/encode payload.</span></span><br><span class="line"><span class="keyword">type</span> Codec <span class="keyword">interface</span> &#123;</span><br><span class="line">	Encode(i <span class="keyword">interface</span>&#123;&#125;) ([]<span class="keyword">byte</span>, error)</span><br><span class="line">	Decode(data []<span class="keyword">byte</span>, i <span class="keyword">interface</span>&#123;&#125;) error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="1uEES"></a></p>
+<h3 id="gorilla-rpc-1"><a href="#gorilla-rpc-1" class="headerlink" title="gorilla/rpc"></a>gorilla/rpc</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Codec creates a CodecRequest to process each request.</span></span><br><span class="line"><span class="keyword">type</span> Codec <span class="keyword">interface</span> &#123;</span><br><span class="line">	NewRequest(*http.Request) CodecRequest</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// CodecRequest decodes a request and encodes a response using a specific</span></span><br><span class="line"><span class="comment">// serialization scheme.</span></span><br><span class="line"><span class="keyword">type</span> CodecRequest <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// Reads request and returns the RPC method name.</span></span><br><span class="line">	Method() (<span class="keyword">string</span>, error)</span><br><span class="line">	<span class="comment">// Reads request filling the RPC method args.</span></span><br><span class="line">	ReadRequest(<span class="keyword">interface</span>&#123;&#125;) error</span><br><span class="line">	<span class="comment">// Writes response using the RPC method reply. The error parameter is</span></span><br><span class="line">	<span class="comment">// the error returned by the method call, if any.</span></span><br><span class="line">	WriteResponse(http.ResponseWriter, <span class="keyword">interface</span>&#123;&#125;, error) error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="HOkKV"></a></p>
+<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><p><a name="t96Q9"></a></p>
+<h3 id="rpcx-3"><a href="#rpcx-3" class="headerlink" title="rpcx"></a>rpcx</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> methodType <span class="keyword">struct</span> &#123;</span><br><span class="line">	sync.Mutex <span class="comment">// protects counters</span></span><br><span class="line">	method     reflect.Method</span><br><span class="line">	ArgType    reflect.Type</span><br><span class="line">	ReplyType  reflect.Type</span><br><span class="line">	<span class="comment">// numCalls   uint</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> functionType <span class="keyword">struct</span> &#123;</span><br><span class="line">	sync.Mutex <span class="comment">// protects counters</span></span><br><span class="line">	fn         reflect.Value</span><br><span class="line">	ArgType    reflect.Type</span><br><span class="line">	ReplyType  reflect.Type</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> service <span class="keyword">struct</span> &#123;</span><br><span class="line">	name     <span class="keyword">string</span>                   <span class="comment">// name of service</span></span><br><span class="line">	rcvr     reflect.Value            <span class="comment">// receiver of methods for the service</span></span><br><span class="line">	typ      reflect.Type             <span class="comment">// type of the receiver</span></span><br><span class="line">	method   <span class="keyword">map</span>[<span class="keyword">string</span>]*methodType   <span class="comment">// registered methods</span></span><br><span class="line">	function <span class="keyword">map</span>[<span class="keyword">string</span>]*functionType <span class="comment">// registered functions</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="DPqbu"></a></p>
+<h3 id="gorilla-rpc-2"><a href="#gorilla-rpc-2" class="headerlink" title="gorilla/rpc"></a>gorilla/rpc</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> service <span class="keyword">struct</span> &#123;</span><br><span class="line">	name     <span class="keyword">string</span>                    <span class="comment">// name of service</span></span><br><span class="line">	rcvr     reflect.Value             <span class="comment">// receiver of methods for the service</span></span><br><span class="line">	rcvrType reflect.Type              <span class="comment">// type of the receiver</span></span><br><span class="line">	methods  <span class="keyword">map</span>[<span class="keyword">string</span>]*serviceMethod <span class="comment">// registered methods</span></span><br><span class="line">	passReq  <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> serviceMethod <span class="keyword">struct</span> &#123;</span><br><span class="line">	method    reflect.Method <span class="comment">// receiver method</span></span><br><span class="line">	argsType  reflect.Type   <span class="comment">// type of the request argument</span></span><br><span class="line">	replyType reflect.Type   <span class="comment">// type of the response argument</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="wlNpo"></a></p>
+<h3 id="grpc-go-2"><a href="#grpc-go-2" class="headerlink" title="grpc-go"></a>grpc-go</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MethodDesc represents an RPC service's method specification.</span></span><br><span class="line"><span class="keyword">type</span> MethodDesc <span class="keyword">struct</span> &#123;</span><br><span class="line">	MethodName <span class="keyword">string</span></span><br><span class="line">	Handler    methodHandler</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ServiceDesc represents an RPC service's specification.</span></span><br><span class="line"><span class="keyword">type</span> ServiceDesc <span class="keyword">struct</span> &#123;</span><br><span class="line">	ServiceName <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// The pointer to the service interface. Used to check whether the user</span></span><br><span class="line">	<span class="comment">// provided implementation satisfies the interface requirements.</span></span><br><span class="line">	HandlerType <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	Methods     []MethodDesc</span><br><span class="line">	Streams     []StreamDesc</span><br><span class="line">	Metadata    <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// service consists of the information of the server serving this service and</span></span><br><span class="line"><span class="comment">// the methods in this service.</span></span><br><span class="line"><span class="keyword">type</span> service <span class="keyword">struct</span> &#123;</span><br><span class="line">	server <span class="keyword">interface</span>&#123;&#125; <span class="comment">// the server for service methods</span></span><br><span class="line">	md     <span class="keyword">map</span>[<span class="keyword">string</span>]*MethodDesc</span><br><span class="line">	sd     <span class="keyword">map</span>[<span class="keyword">string</span>]*StreamDesc</span><br><span class="line">	mdata  <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="uRImO"></a></p>
+<h2 id="Option"><a href="#Option" class="headerlink" title="Option"></a>Option</h2><p><a name="d9lVI"></a></p>
+<h3 id="grpc-go-3"><a href="#grpc-go-3" class="headerlink" title="grpc-go"></a>grpc-go</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A ServerOption sets options such as credentials, codec and keepalive parameters, etc.</span></span><br><span class="line"><span class="keyword">type</span> ServerOption <span class="keyword">interface</span> &#123;</span><br><span class="line">	apply(*serverOptions)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> serverOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">	creds                 credentials.TransportCredentials</span><br><span class="line">	codec                 baseCodec</span><br><span class="line">	cp                    Compressor</span><br><span class="line">	dc                    Decompressor</span><br><span class="line">	unaryInt              UnaryServerInterceptor</span><br><span class="line">	streamInt             StreamServerInterceptor</span><br><span class="line">	inTapHandle           tap.ServerInHandle</span><br><span class="line">	statsHandler          stats.Handler</span><br><span class="line">	maxConcurrentStreams  <span class="keyword">uint32</span></span><br><span class="line">	maxReceiveMessageSize <span class="keyword">int</span></span><br><span class="line">	maxSendMessageSize    <span class="keyword">int</span></span><br><span class="line">	unknownStreamDesc     *StreamDesc</span><br><span class="line">	keepaliveParams       keepalive.ServerParameters</span><br><span class="line">	keepalivePolicy       keepalive.EnforcementPolicy</span><br><span class="line">	initialWindowSize     <span class="keyword">int32</span></span><br><span class="line">	initialConnWindowSize <span class="keyword">int32</span></span><br><span class="line">	writeBufferSize       <span class="keyword">int</span></span><br><span class="line">	readBufferSize        <span class="keyword">int</span></span><br><span class="line">	connectionTimeout     time.Duration</span><br><span class="line">	maxHeaderListSize     *<span class="keyword">uint32</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="d880X"></a></p>
+<h2 id="Connection"><a href="#Connection" class="headerlink" title="Connection"></a>Connection</h2><p><a name="GXGaP"></a></p>
+<h3 id="rpcx-4"><a href="#rpcx-4" class="headerlink" title="rpcx"></a>rpcx</h3><p><a name="iECnG"></a></p>
+<h4 id="tcp"><a href="#tcp" class="headerlink" title="tcp"></a>tcp</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> makeListeners = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]MakeListener)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	makeListeners[<span class="string">"tcp"</span>] = tcpMakeListener(<span class="string">"tcp"</span>)</span><br><span class="line">	makeListeners[<span class="string">"tcp4"</span>] = tcpMakeListener(<span class="string">"tcp4"</span>)</span><br><span class="line">	makeListeners[<span class="string">"tcp6"</span>] = tcpMakeListener(<span class="string">"tcp6"</span>)</span><br><span class="line">	makeListeners[<span class="string">"http"</span>] = tcpMakeListener(<span class="string">"tcp"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RegisterMakeListener registers a MakeListener for network.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RegisterMakeListener</span><span class="params">(network <span class="keyword">string</span>, ml MakeListener)</span></span> &#123;</span><br><span class="line">	makeListeners[network] = ml</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// MakeListener defines a listener generater.</span></span><br><span class="line"><span class="keyword">type</span> MakeListener <span class="function"><span class="keyword">func</span><span class="params">(s *Server, address <span class="keyword">string</span>)</span> <span class="params">(ln net.Listener, err error)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">// <span class="title">block</span> <span class="title">can</span> <span class="title">be</span> <span class="title">nil</span> <span class="title">if</span> <span class="title">the</span> <span class="title">caller</span> <span class="title">wishes</span> <span class="title">to</span> <span class="title">skip</span> <span class="title">encryption</span> <span class="title">in</span> <span class="title">kcp</span>.</span></span><br><span class="line"><span class="function">// <span class="title">tlsConfig</span> <span class="title">can</span> <span class="title">be</span> <span class="title">nil</span> <span class="title">iff</span> <span class="title">we</span> <span class="title">are</span> <span class="title">not</span> <span class="title">using</span> <span class="title">network</span> "<span class="title">quic</span>".</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="params">(s *Server)</span> <span class="title">makeListener</span><span class="params">(network, address <span class="keyword">string</span>)</span> <span class="params">(ln net.Listener, err error)</span></span> &#123;</span><br><span class="line">	ml := makeListeners[network]</span><br><span class="line">	<span class="keyword">if</span> ml == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"can not make listener for %s"</span>, network)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ml(s, address)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">tcpMakeListener</span><span class="params">(network <span class="keyword">string</span>)</span> <span class="title">func</span><span class="params">(s *Server, address <span class="keyword">string</span>)</span> <span class="params">(ln net.Listener, err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(s *Server, address <span class="keyword">string</span>)</span> <span class="params">(ln net.Listener, err error)</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> s.tlsConfig == <span class="literal">nil</span> &#123;</span><br><span class="line">			ln, err = net.Listen(network, address)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ln, err = tls.Listen(network, address, s.tlsConfig)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> ln, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="Pusxo"></a></p>
+<h4 id="quic"><a href="#quic" class="headerlink" title="quic"></a>quic</h4><blockquote>
+<p>quicconn “github.com/marten-seemann/quic-conn”</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	makeListeners[<span class="string">"quic"</span>] = quicMakeListener</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">quicMakeListener</span><span class="params">(s *Server, address <span class="keyword">string</span>)</span> <span class="params">(ln net.Listener, err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> s.tlsConfig == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"TLSConfig must be configured in server.Options"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> quicconn.Listen(<span class="string">"udp"</span>, address, s.tlsConfig)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="PV4WX"></a></p>
+<h4 id="utp"><a href="#utp" class="headerlink" title="utp"></a>utp</h4><blockquote>
+<p>“github.com/anacrolix/utp”</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	makeListeners[<span class="string">"utp"</span>] = utpMakeListener</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">utpMakeListener</span><span class="params">(s *Server, address <span class="keyword">string</span>)</span> <span class="params">(ln net.Listener, err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> utp.Listen(address)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="E6HrV"></a></p>
+<h4 id="kcp"><a href="#kcp" class="headerlink" title="kcp"></a>kcp</h4><blockquote>
+<p>import kcp “github.com/xtaci/kcp-go”</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	makeListeners[<span class="string">"kcp"</span>] = kcpMakeListener</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">kcpMakeListener</span><span class="params">(s *Server, address <span class="keyword">string</span>)</span> <span class="params">(ln net.Listener, err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> s.options == <span class="literal">nil</span> || s.options[<span class="string">"BlockCrypt"</span>] == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"KCP BlockCrypt must be configured in server.Options"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> kcp.ListenWithOptions(address, s.options[<span class="string">"BlockCrypt"</span>].(kcp.BlockCrypt), <span class="number">10</span>, <span class="number">3</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// WithBlockCrypt sets kcp.BlockCrypt.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithBlockCrypt</span><span class="params">(bc kcp.BlockCrypt)</span> <span class="title">OptionFn</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(s *Server)</span></span> &#123;</span><br><span class="line">		s.options[<span class="string">"BlockCrypt"</span>] = bc</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/框架/" rel="tag"># 框架</a>
+          
+            <a href="/tags/rpc/" rel="tag"># rpc</a>
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/17/back-to-blog/" rel="next" title="Back-to-Blog">
+                <i class="fa fa-chevron-left"></i> Back-to-Blog
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.png" alt="Abser Ari">
+            
+              <p class="site-author-name" itemprop="name">Abser Ari</p>
+              <div class="site-description motion-element" itemprop="description">明天，是新的一天</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">21</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/rss2.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yhyddr" title="GitHub &rarr; https://github.com/yhyddr" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:abserari@gmail.com" title="E-Mail &rarr; mailto:abserari@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://yuque.com/abser" title="Yuque &rarr; https://yuque.com/abser" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Yuque</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.yuque.com/abs/in/cdwiyq" title="Aboutme &rarr; https://www.yuque.com/abs/in/cdwiyq" rel="noopener" target="_blank"><i class="fa fa-fw fa-google"></i>Aboutme</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://bugzeng.com/" title="https://bugzeng.com/" rel="noopener" target="_blank">曾某</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Struct-amp-Design"><span class="nav-number">1.</span> <span class="nav-text">Struct&amp;Design</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Server"><span class="nav-number">1.1.</span> <span class="nav-text">Server</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rpcx"><span class="nav-number">1.1.1.</span> <span class="nav-text">rpcx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gorilla-rpc"><span class="nav-number">1.1.2.</span> <span class="nav-text">gorilla/rpc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grpc-go"><span class="nav-number">1.1.3.</span> <span class="nav-text">grpc-go</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Client"><span class="nav-number">1.2.</span> <span class="nav-text">Client</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rpcx-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">rpcx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grpc-go-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">grpc-go</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Codec"><span class="nav-number">1.3.</span> <span class="nav-text">Codec</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rpcx-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">rpcx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gorilla-rpc-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">gorilla/rpc</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service"><span class="nav-number">1.4.</span> <span class="nav-text">Service</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rpcx-3"><span class="nav-number">1.4.1.</span> <span class="nav-text">rpcx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gorilla-rpc-2"><span class="nav-number">1.4.2.</span> <span class="nav-text">gorilla/rpc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grpc-go-2"><span class="nav-number">1.4.3.</span> <span class="nav-text">grpc-go</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Option"><span class="nav-number">1.5.</span> <span class="nav-text">Option</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#grpc-go-3"><span class="nav-number">1.5.1.</span> <span class="nav-text">grpc-go</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Connection"><span class="nav-number">1.6.</span> <span class="nav-text">Connection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rpcx-4"><span class="nav-number">1.6.1.</span> <span class="nav-text">rpcx</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#tcp"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">tcp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#quic"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">quic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#utp"><span class="nav-number">1.6.1.3.</span> <span class="nav-text">utp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kcp"><span class="nav-number">1.6.1.4.</span> <span class="nav-text">kcp</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Abser Ari</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.1</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="Total Visitors">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="Total Views">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+      <div>
+        <div class="addthis_inline_share_toolbox">
+  <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5cce7a81711bacdf" async="async"></script>
+</div>
+
+      </div>
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/fancybox/source/jquery.fancybox.pack.js"></script>
+
+  
+  <script src="/lib/reading_progress/reading_progress.js"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.1"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+  
+  <script id="dsq-count-scr" src="https://blog-abser-top.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://hexo.abser.top/2019/07/20/rpc框架设计参照/";
+    this.page.identifier = "2019/07/20/rpc框架设计参照/";
+    this.page.title = 'Rpc框架设计参照';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://blog-abser-top.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    loadComments();
+  
+</script>
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
