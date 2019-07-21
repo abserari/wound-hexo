@@ -110,18 +110,18 @@
 
 
 
-  <meta name="description" content="Struct&amp;amp;Design Server rpcx1234567891011121314151617181920212223242526272829303132333435// Server is rpcx server that use TCP or UDP.type Server struct &amp;#123;	ln                 net.Listener	readTim">
+  <meta name="description" content="Struct&amp;amp;Design这里讲常见的几个 rpc 框架的设计，用代码的方式表达出来。包括 google 的 grpc，和 rpcx，以及另一个 rpc 实现。 主要是分 server 和 client ，codec 和 service 的设计为重，可以以这里为参考资料思考一下设计思想。 建议了解一点 rpc 知识的人阅读。 Server rpcx123456789101112131415">
 <meta name="keywords" content="框架,rpc,go">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Rpc框架设计参照">
 <meta property="og:url" content="https://hexo.abser.top/2019/07/20/rpc框架设计参照/index.html">
 <meta property="og:site_name" content="Wound">
-<meta property="og:description" content="Struct&amp;amp;Design Server rpcx1234567891011121314151617181920212223242526272829303132333435// Server is rpcx server that use TCP or UDP.type Server struct &amp;#123;	ln                 net.Listener	readTim">
+<meta property="og:description" content="Struct&amp;amp;Design这里讲常见的几个 rpc 框架的设计，用代码的方式表达出来。包括 google 的 grpc，和 rpcx，以及另一个 rpc 实现。 主要是分 server 和 client ，codec 和 service 的设计为重，可以以这里为参考资料思考一下设计思想。 建议了解一点 rpc 知识的人阅读。 Server rpcx123456789101112131415">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-07-20T04:00:40.892Z">
+<meta property="og:updated_time" content="2019-07-20T04:03:08.415Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Rpc框架设计参照">
-<meta name="twitter:description" content="Struct&amp;amp;Design Server rpcx1234567891011121314151617181920212223242526272829303132333435// Server is rpcx server that use TCP or UDP.type Server struct &amp;#123;	ln                 net.Listener	readTim">
+<meta name="twitter:description" content="Struct&amp;amp;Design这里讲常见的几个 rpc 框架的设计，用代码的方式表达出来。包括 google 的 grpc，和 rpcx，以及另一个 rpc 实现。 主要是分 server 和 client ，codec 和 service 的设计为重，可以以这里为参考资料思考一下设计思想。 建议了解一点 rpc 知识的人阅读。 Server rpcx123456789101112131415">
 
 
 
@@ -417,7 +417,7 @@
                 
               
 
-              <time title="Created: 2019-07-20 11:59:03 / Modified: 12:00:40" itemprop="dateCreated datePublished" datetime="2019-07-20T11:59:03+08:00">2019-07-20</time>
+              <time title="Created: 2019-07-20 11:59:03 / Modified: 12:03:08" itemprop="dateCreated datePublished" datetime="2019-07-20T11:59:03+08:00">2019-07-20</time>
             
 
             
@@ -494,7 +494,9 @@
       
 
       
-        <h1 id="Struct-amp-Design"><a href="#Struct-amp-Design" class="headerlink" title="Struct&amp;Design"></a>Struct&amp;Design</h1><p><a name="BRgOt"></a></p>
+        <h1 id="Struct-amp-Design"><a href="#Struct-amp-Design" class="headerlink" title="Struct&amp;Design"></a>Struct&amp;Design</h1><p>这里讲常见的几个 rpc 框架的设计，用代码的方式表达出来。<br>包括 google 的 grpc，<br>和 rpcx，以及另一个 rpc 实现。</p>
+<p>主要是分 server 和 client ，codec 和 service 的设计为重，可以以这里为参考资料思考一下设计思想。</p>
+<p>建议了解一点 rpc 知识的人阅读。<br><a name="BRgOt"></a></p>
 <h2 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h2><p><a name="4GRoG"></a></p>
 <h3 id="rpcx"><a href="#rpcx" class="headerlink" title="rpcx"></a>rpcx</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Server is rpcx server that use TCP or UDP.</span></span><br><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">	ln                 net.Listener</span><br><span class="line">	readTimeout        time.Duration</span><br><span class="line">	writeTimeout       time.Duration</span><br><span class="line">	gatewayHTTPServer  *http.Server</span><br><span class="line">	DisableHTTPGateway <span class="keyword">bool</span> <span class="comment">// should disable http invoke or not.</span></span><br><span class="line">	DisableJSONRPC     <span class="keyword">bool</span> <span class="comment">// should disable json rpc or not.</span></span><br><span class="line"></span><br><span class="line">	serviceMapMu sync.RWMutex</span><br><span class="line">	serviceMap   <span class="keyword">map</span>[<span class="keyword">string</span>]*service</span><br><span class="line"></span><br><span class="line">	mu         sync.RWMutex</span><br><span class="line">	activeConn <span class="keyword">map</span>[net.Conn]<span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	doneChan   <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	seq        <span class="keyword">uint64</span></span><br><span class="line"></span><br><span class="line">	inShutdown <span class="keyword">int32</span></span><br><span class="line">	onShutdown []<span class="function"><span class="keyword">func</span><span class="params">(s *Server)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">	// <span class="title">TLSConfig</span> <span class="title">for</span> <span class="title">creating</span> <span class="title">tls</span> <span class="title">tcp</span> <span class="title">connection</span>.</span></span><br><span class="line"><span class="function">	<span class="title">tlsConfig</span> *<span class="title">tls</span>.<span class="title">Config</span></span></span><br><span class="line"><span class="function">	// <span class="title">BlockCrypt</span> <span class="title">for</span> <span class="title">kcp</span>.<span class="title">BlockCrypt</span></span></span><br><span class="line"><span class="function">	<span class="title">options</span> <span class="title">map</span>[<span class="title">string</span>]<span class="title">interface</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// CORS options</span></span><br><span class="line">	corsOptions *CORSOptions</span><br><span class="line"></span><br><span class="line">	Plugins PluginContainer</span><br><span class="line"></span><br><span class="line">	<span class="comment">// AuthFunc can be used to auth.</span></span><br><span class="line">	AuthFunc <span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context, req *protocol.Message, token <span class="keyword">string</span>)</span> <span class="title">error</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">	<span class="title">handlerMsgNum</span> <span class="title">int32</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
 <p><a name="8yVvp"></a></p>
@@ -581,8 +583,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/17/back-to-blog/" rel="next" title="Back-to-Blog">
-                <i class="fa fa-chevron-left"></i> Back-to-Blog
+              <a href="/2019/07/17/《论毅力》/" rel="next" title="《论毅力》">
+                <i class="fa fa-chevron-left"></i> 《论毅力》
               </a>
             
           </div>
@@ -590,6 +592,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/21/远程工作/" rel="prev" title="远程工作">
+                远程工作 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -667,7 +673,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">21</span>
+                    <span class="site-state-item-count">22</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -696,7 +702,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">6</span>
+                      
+                    
+                    <span class="site-state-item-count">7</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -761,7 +769,15 @@
                     
                       
                     
-                    <span class="site-state-item-count">26</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">30</span>
                     <span class="site-state-item-name">tags</span>
                   
                 </div>
